@@ -1,13 +1,152 @@
 body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  margin: 20px;
+  background: #ccc;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
 }
-
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+.AddressBook__content {
+  max-width: 800px;
+  position: relative;
+  width: 100%;
+  margin: 0 auto;
+}
+.AddressBook__list {
+  background: white;
+  min-height: 400px;
+  padding: 20px;
+  box-shadow: 3px 2px 5px 0px rgba(0,0,0,0.21);
+}
+.AddressBook__card {
+  background: white;
+  width: 400px;
+  margin: 0 auto;
+  position: relative;
+  min-height: 400px;
+  padding: 20px;
+  padding-top: 60px;
+  box-shadow: 3px 2px 5px 0px rgba(0,0,0,0.21);
+}
+.AddressBook__content h2{
+  margin-top: 0px;
+}
+.AddressBook__contact-item {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #ddd;
+  padding: 5px;
+}
+a {
+  color: #444
+}
+a.delete {
+  color: #ff0000
+}
+.addNew {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+.AddressBook__contact-item--name {
+  cursor: pointer;
+  display: block
+}
+.AddressBook__card__buttons {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+.AddressBook__card__close {
+  display: inline-block;
+  margin-left: 20px;
+}
+.formRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+.formRow label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+.formRow input, .formRow select {
+  padding: 6px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 2px;
+  width: 100%;
+}
+.formRow__label{
+  display: block;
+  width: 110px;
+}
+.formRow select  {
+  display: block;
+  width: 110px;
+  margin-right: 10px;
+}
+.AddressBook__card__contacts {
+  list-style: none;
+  padding: 0px;
+  margin: 0px;
+  margin-top: 20px;
+}
+.AddressBook__card__contacts .contactItem {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 0px 0px 10px;
+  border-bottom: 1px solid #eee;
+}
+.AddressBook__card__contacts .contactItemType {
+  width: 100px;
+  padding-left: 20px;
+}
+.formRow a {
+  margin-left: 10px;
+  font-size: 10px;
+}
+.AddressBook__card__add a{
+  display: block;
+  width: 100%;
+  text-align: center;
+  margin: 5px 0px;
+  padding: 10px 0px;
+  background: rgba(0,0,0,0.05);
+  border-radius: 4px;
+  text-decoration: none;
+}
+.AddressBook__card__add a:hover {
+  background: rgba(0,0,0,0.2);
+}
+.AddressBook__card__buttons--save {
+  position: absolute;
+  bottom: 10px;
+  left: 0px;
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+}
+.AddressBook__card__buttons--save button{
+  margin: 0px 10px;
+  font-size: 14px;
+  padding: 5px 10px;
+  background: #3984ff;
+  border: 1px solid #2e7dff;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+}
+.AddressBook__card__buttons--save button.cancel {
+  background: #fff;
+  border: 1px solid #2e7dff;
+  color: #2e7dff;
+}
+.AddressBook__card__buttons--save  button:disabled, .AddressBook__card__buttons--save button[disabled] {
+  opacity: 0.3;
+  cursor: not-allowed;
 }

@@ -9,11 +9,9 @@ import {
     DELETE_CONTACT_ITEM,
     SAVE_CONTACT,
     CANCEL_EDITING_CONTACT,
-    LOAD_DATA,
     EDIT_NAME,
     EDIT_SURNAME,
-    CLOSE_CONTACT,
-    SEARCH_CONTACTS
+    CLOSE_CONTACT
 } from '../constants/actions' 
 
 export const openContact = (id) => ({ type: OPEN_CONTACT, payload: {id} })

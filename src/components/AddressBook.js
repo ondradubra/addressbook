@@ -43,7 +43,8 @@ export default class AddressBook extends Component {
                         <div className='AddressBook__empty'>Your address book is empty.</div>
                 }
                 <a
-                    href=''
+                    href='#'
+                    className='addNew'
                     onClick={(e) => {
                         e.preventDefault()
                         actions.addContact()
@@ -65,37 +66,43 @@ export default class AddressBook extends Component {
         const {activeContact, data} = this.props
         return data.find((item) => item.id === activeContact)
     }
-    editCard = (contactData, isEdit) => {
+    editCard = (contactData) => {
         const {actions} = this.props
 
         return (
             <div className='AddressBook__card__content'>
                 <h2>Edit contact</h2>
-                <div>
-                    <input
-                        type="text"
-                        value={contactData.name}
-                        className='input'
-                        onChange={(e) => {
-                            const value = e.target.value
-                            actions.editName(value, 'name')
-                        }}
-                    />
+                <div className='formRow'>
+                    <label>
+                        <span className='formRow__label'>First name</span>
+                        <input
+                            type="text"
+                            value={contactData.name}
+                            className='input'
+                            onChange={(e) => {
+                                const value = e.target.value
+                                actions.editName(value, 'name')
+                            }}
+                        />
+                    </label>
                 </div>
-                <div>
-                    <input
-                        type="text"
-                        value={contactData.surname}
-                        className='input'
-                        onChange={(e) => {
-                            const value = e.target.value
-                            actions.editName(value, 'surname')
-                        }}
-                    />
+                <div className='formRow'>
+                    <label>
+                        <span className='formRow__label'>Last name</span>
+                        <input
+                            type="text"
+                            value={contactData.surname}
+                            className='input'
+                            onChange={(e) => {
+                                const value = e.target.value
+                                actions.editName(value, 'surname')
+                            }}
+                        />
+                    </label>
                 </div>
                 <ul className='AddressBook__card__contacts'>
                     {contactData.contacts.map((contactItem, index) => 
-                        <div key={`edit-contactItem${index}`}>
+                        <div className='formRow' key={`edit-contactItem${index}`}>
                             <select onChange={(e) => actions.changeContactItemType(e.target.value, index)} value={contactItem.type}>
                                 {CONTACT_TYPES.map((contactType) => <option key={contactType} value={contactType}>{contactType}</option>)}
                             </select>
@@ -108,13 +115,32 @@ export default class AddressBook extends Component {
                                 }}
                                 className='input'
                             />
-                            <a href='javascript:' className='delete' onClick={() => actions.deleteContactItem(index)}>Delete</a>
+                            <a
+                                href='#'
+                                className='delete'
+                                onClick={(e) => { 
+                                    e.preventDefault();
+                                    actions.deleteContactItem(index) 
+                                }}
+                            >
+                                Delete
+                            </a>
                         </div>
                     )}
                 </ul>
-                <div><a href='javascript:' onClick={() => actions.addContactItem()}>Add new contact item</a></div>
-                <div>
-                    <button type='button' onClick={() => actions.cancelEditing(isEdit)}>Cancel</button>
+                <div className='AddressBook__card__add'>
+                    <a
+                        href='#'
+                        onClick={(e) => {
+                            e.preventDefault()
+                            actions.addContactItem()
+                        }}
+                    >
+                        Add new contact item
+                    </a>
+                </div>
+                <div className='AddressBook__card__buttons--save'>
+                    <button type='button' className='cancel' onClick={() => actions.cancelEditing()}>Cancel</button>
                     <button
                         type='button'
                         onClick={() => actions.saveEditing()}
@@ -132,12 +158,33 @@ export default class AddressBook extends Component {
 
         return (
             <div className='AddressBook__card__content'>
-                <a href='javascript:' className='AddressBook__card__close' onClick={() => actions.closeContact()}>Close</a>
-                <a href='javascript:' className='AddressBook__card__edit' onClick={()=> actions.editContact(contactData)}>Edit</a>
+                <div className='AddressBook__card__buttons'>
+                    <a
+                        href='#'
+                        className='AddressBook__card__edit'
+                        onClick={(e)=> {
+                            e.preventDefault()
+                            actions.editContact(contactData)
+                        }}
+                    >
+                        Edit
+                    </a>
+                    <a href='#'
+                        className='AddressBook__card__close'
+                        onClick={(e) => {
+                            e.preventDefault()
+                            actions.closeContact() 
+                    }}>
+                        Close
+                    </a>
+                </div>
                 <h2>{contactData.name} {contactData.surname}</h2>
                 <ul className='AddressBook__card__contacts'>
                     {contactData.contacts.map((contactItem, index) => 
-                        <li key={`contactItem${index}`}>{contactItem.type}: {contactItem.content}</li>
+                        <li key={`contactItem${index}`} className='contactItem'>
+                            <span className='contactItemType'>{contactItem.type}</span>
+                            <span className='contactItemContent'>{contactItem.content}</span>
+                        </li>
                     )}
                 </ul>
             </div>
@@ -156,7 +203,7 @@ export default class AddressBook extends Component {
         const {activeContact, data, actions} = this.props
         console.log(this.props)
         return (
-            <div className='AddressBook__card'>
+            <div className='AddressBook__content'>
                 {activeContact ? this.contactCard() : this.contactsList()}
             </div>
         )

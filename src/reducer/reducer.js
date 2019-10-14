@@ -8,11 +8,9 @@ import {
     SAVE_CONTACT,
     CANCEL_EDITING_CONTACT,
     DELETE_CONTACT_ITEM,
-    LOAD_DATA,
     EDIT_NAME,
     EDIT_SURNAME,
     CLOSE_CONTACT,
-    SEARCH_CONTACTS,
     CHANGE_CONTACT_ITEM_CONTENT
 } from '../constants/actions' 
 import produce from 'immer'
@@ -79,7 +77,7 @@ export default function reducer(state = initialState, action) {
                 return produce(state, (s) => {
                     s.data.push(newContact)
                     s.activeContact = newId
-                    s.isNewContact = false
+                    s.isNewContact = true
                     s.isEditingContact = true
                 })
         case CANCEL_EDITING_CONTACT:
@@ -88,13 +86,13 @@ export default function reducer(state = initialState, action) {
                 if (!isNewContact) { 
                     s.data[indexContact] = s.originalData
                 } 
-                if (clearEmptyData) { 
+                if (isNewContact) { 
                     s.data = clearEmptyData
+                    s.activeContact = null
+                    s.isNewContact = false
                 }
-                s.activeContact = null
                 s.originalData = null
                 s.isEditingContact = false
-                s.isNewContact = false
             })
         case SAVE_CONTACT:
             return produce(state, (s) => {
