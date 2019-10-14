@@ -4,14 +4,24 @@ import {CONTACT_TYPES} from '../constants/variables'
 export default class AddressBook extends Component {
     contactsList = () => {
         const {data, actions} = this.props
-        console.log(data)
         return (
             <div className='AddressBook__list'>
                 <h2>Address Book</h2>
                 {
                     data.length > 0 ? 
                         <div className='AddressBook__list_content'>
-                            {data.map((item) => 
+                            {[...data].sort((a, b) => {
+                                    const surname1 = a.surname.toUpperCase()
+                                    const surname2 = b.surname.toUpperCase()
+
+                                    if (surname1 > surname2) {
+                                        return 1
+                                    }
+                                    if (surname1 < surname2) {
+                                        return -1
+                                    }
+                                    return 0
+                            }).map((item) => 
                                 <div
                                     className='AddressBook__contact-item'
                                     key={item.id}
