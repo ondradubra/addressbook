@@ -1,7 +1,11 @@
 import React, {Component} from 'react'
 import {CONTACT_TYPES} from '../constants/variables'
 
-export default class AddressBook extends Component {
+import {connect} from 'react-redux'
+import {bindActionCreators} from 'redux'
+import * as Actions from '../actions/actions'
+
+class AddressBook extends Component {
     contactsList = () => {
         const {data, actions} = this.props
         return (
@@ -27,31 +31,29 @@ export default class AddressBook extends Component {
                                     key={item.id}
                                 >
                                     <span className='AddressBook__contact-item--name' onClick={() => actions.openContact(item.id)}>{item.name} {item.surname}</span>
-                                    <a
-                                        href='#'
-                                        className='delete'
+                                    <span
+                                        className='link delete'
                                         onClick={(e) => {
                                             e.preventDefault()
                                             actions.deleteContact(item.id)
                                         }}
                                     >
                                         Delete
-                                    </a>
+                                    </span>
                                 </div>
                             )}
                         </div> : 
                         <div className='AddressBook__empty'>Your address book is empty.</div>
                 }
-                <a
-                    href='#'
-                    className='addNew'
+                <span
+                    className='link addNew'
                     onClick={(e) => {
                         e.preventDefault()
                         actions.addContact()
                     }}
                 >
                     Add new contact
-                </a>
+                </span>
             </div>
         )
     }
@@ -115,29 +117,28 @@ export default class AddressBook extends Component {
                                 }}
                                 className='input'
                             />
-                            <a
-                                href='#'
-                                className='delete'
+                            <span
+                                className='link delete'
                                 onClick={(e) => { 
                                     e.preventDefault();
                                     actions.deleteContactItem(index) 
                                 }}
                             >
                                 Delete
-                            </a>
+                            </span>
                         </div>
                     )}
                 </ul>
                 <div className='AddressBook__card__add'>
-                    <a
-                        href='#'
+                    <span
+                        className='link'
                         onClick={(e) => {
                             e.preventDefault()
                             actions.addContactItem()
                         }}
                     >
                         Add new contact item
-                    </a>
+                    </span>
                 </div>
                 <div className='AddressBook__card__buttons--save'>
                     <button type='button' className='cancel' onClick={() => actions.cancelEditing()}>Cancel</button>
@@ -159,24 +160,23 @@ export default class AddressBook extends Component {
         return (
             <div className='AddressBook__card__content'>
                 <div className='AddressBook__card__buttons'>
-                    <a
-                        href='#'
-                        className='AddressBook__card__edit'
+                    <span
+                        className='link AddressBook__card__edit'
                         onClick={(e)=> {
                             e.preventDefault()
                             actions.editContact(contactData)
                         }}
                     >
                         Edit
-                    </a>
-                    <a href='#'
-                        className='AddressBook__card__close'
+                    </span>
+                    <span
+                        className='link AddressBook__card__close'
                         onClick={(e) => {
                             e.preventDefault()
                             actions.closeContact() 
                     }}>
                         Close
-                    </a>
+                    </span>
                 </div>
                 <h2>{contactData.name} {contactData.surname}</h2>
                 <ul className='AddressBook__card__contacts'>
@@ -200,7 +200,7 @@ export default class AddressBook extends Component {
         )
     }
     render() {
-        const {activeContact, data, actions} = this.props
+        const {activeContact} = this.props
         console.log(this.props)
         return (
             <div className='AddressBook__content'>
@@ -209,3 +209,20 @@ export default class AddressBook extends Component {
         )
     }
 }
+
+const mapStateToProps = (state) => ({
+    data: state.data,
+    isEditingContact: state.isEditingContact,
+    activeContact: state.activeContact
+})
+
+const mapDispatchToProps = (dispatch) => ({
+    actions: bindActionCreators(Actions, dispatch)
+})
+
+const connector = connect(
+    mapStateToProps,
+    mapDispatchToProps
+)
+  
+export default connector(AddressBook)

@@ -1,5 +1,5 @@
 import React from 'react';
-import AddressBook from './containers/AddressBook'
+import AddressBook from './components/AddressBook'
 
 function App() {
   return (

@@ -35,10 +35,12 @@ body {
   border-bottom: 1px solid #ddd;
   padding: 5px;
 }
-a {
-  color: #444
+.link {
+  color: #444;
+  text-decoration: underline;
+  cursor: pointer;
 }
-a.delete {
+.link.delete {
   color: #ff0000
 }
 .addNew {
@@ -106,11 +108,11 @@ a.delete {
   width: 100px;
   padding-left: 20px;
 }
-.formRow a {
+.formRow .link {
   margin-left: 10px;
   font-size: 10px;
 }
-.AddressBook__card__add a{
+.AddressBook__card__add .link{
   display: block;
   width: 100%;
   text-align: center;
@@ -120,7 +122,7 @@ a.delete {
   border-radius: 4px;
   text-decoration: none;
 }
-.AddressBook__card__add a:hover {
+.AddressBook__card__add .link:hover {
   background: rgba(0,0,0,0.2);
 }
 .AddressBook__card__buttons--save {
