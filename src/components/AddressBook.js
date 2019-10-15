@@ -106,7 +106,7 @@ class AddressBook extends Component {
                     {contactData.contacts.map((contactItem, index) => 
                         <div className='formRow' key={`edit-contactItem${index}`}>
                             <select onChange={(e) => actions.changeContactItemType(e.target.value, index)} value={contactItem.type}>
-                                {CONTACT_TYPES.map((contactType) => <option key={contactType} value={contactType}>{contactType}</option>)}
+                                {Object.keys(CONTACT_TYPES).map((contactTypeKey) => <option key={contactTypeKey} value={contactTypeKey}>{CONTACT_TYPES[contactTypeKey]}</option>)}
                             </select>
                             <input
                                 type="text"
@@ -182,7 +182,7 @@ class AddressBook extends Component {
                 <ul className='AddressBook__card__contacts'>
                     {contactData.contacts.map((contactItem, index) => 
                         <li key={`contactItem${index}`} className='contactItem'>
-                            <span className='contactItemType'>{contactItem.type}</span>
+                            <span className='contactItemType'>{CONTACT_TYPES[contactItem.type]}</span>
                             <span className='contactItemContent'>{contactItem.content}</span>
                         </li>
                     )}
