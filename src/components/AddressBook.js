@@ -1,11 +1,28 @@
 import React, {Component} from 'react'
-import {CONTACT_TYPES} from '../constants/variables'
+import * as fetch from 'isomorphic-fetch'
+
+import {CONTACT_TYPES, API} from '../constants/variables'
 
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import * as Actions from '../actions/actions'
 
 class AddressBook extends Component {
+    componentDidMount() {
+         this.loadData()   
+    }
+
+    loadData = () => {
+        const {actions} = this.props
+        fetch(`${API}/get.php`)
+        .then((response) => {
+            if (response.status >= 400) {
+                throw new Error("Bad response from server")
+            }
+            return response.json()
+        }).then((data) => actions.loadData(data))  
+    }
+
     contactsList = () => {
         const {data, actions} = this.props
         return (

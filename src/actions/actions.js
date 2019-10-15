@@ -11,7 +11,8 @@ import {
     CANCEL_EDITING_CONTACT,
     EDIT_NAME,
     EDIT_SURNAME,
-    CLOSE_CONTACT
+    CLOSE_CONTACT,
+    LOAD_DATA
 } from '../constants/actions' 
 
 export const openContact = (id) => ({ type: OPEN_CONTACT, payload: {id} })
@@ -26,3 +27,4 @@ export const deleteContactItem = (index) => ({ type: DELETE_CONTACT_ITEM, payloa
 export const editName = (content, name) => ({ type: name === 'name' ? EDIT_NAME : EDIT_SURNAME, payload: {content} })
 export const deleteContact = (id) => ({ type: DELETE_CONTACT, payload: {id} })
 export const addContact = () => ({ type: ADD_CONTACT })
+export const loadData = (data) => ({ type: LOAD_DATA, payload: {data} })

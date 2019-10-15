@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "immer": "^4.0.1",
+    "isomorphic-fetch": "^2.2.1",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
     "react-redux": "^7.1.1",

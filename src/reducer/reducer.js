@@ -11,28 +11,12 @@ import {
     EDIT_NAME,
     EDIT_SURNAME,
     CLOSE_CONTACT,
-    CHANGE_CONTACT_ITEM_CONTENT
+    CHANGE_CONTACT_ITEM_CONTENT,
+    LOAD_DATA
 } from '../constants/actions' 
 import produce from 'immer'
 import {CONTACT_TYPES} from '../constants/variables'
 
-const defaultData = [
-    {
-        id: 1,
-        name: "Ondrej",
-        surname: "Dubravcik",
-        contacts: [
-            {
-                type: "email",
-                content: "ondrej.dubravcik@gmail.com"
-            },
-            {
-                type: "phone",
-                content: "775663720"
-            },
-        ]
-    }
-]
 
 const generateNewId = (arr) => {
     let maxId = 0
@@ -44,7 +28,7 @@ const generateNewId = (arr) => {
 }
 
 const initialState = {
-    data: defaultData,
+    data: [],
     activeContact: null,
     originalContactData: null,
     isEditingContact: false,
@@ -60,6 +44,11 @@ export default function reducer(state = initialState, action) {
     const isNewContact = state.isNewContact
 
     switch (action.type) {
+        case LOAD_DATA:
+            const data = action.payload.data
+            return produce(state, (s) => {
+                s.data = data
+            })
         case EDIT_CONTACT:
             const originalData = action.payload.originalData
             return produce(state, (s) => {

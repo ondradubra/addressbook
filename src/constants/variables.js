@@ -6,3 +6,4 @@ export const CONTACT_TYPES = {
     region: 'Region',
     zipcode: 'ZIP code'
 }
+export const API = "http://localhost:8888"
