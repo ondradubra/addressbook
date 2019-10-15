@@ -14,7 +14,6 @@ if ($id && $data && $id==$data->id) {
     }
 
 } else {
-    http_response_code(404);
-    echo json_encode(array("message" => "ID or DATA not exist."));
+    echo json_encode(array("message" => "ID not exists or DATA missing"));
 }
 mysqli_close($link);

@@ -8,12 +8,10 @@ if ($id) {
         http_response_code(200);  
         echo json_encode(array("message" => "ok"));
     } else {
-        http_response_code(404);
         echo json_encode(array("message" => "Error - deleting contact. ".mysqli_error($conn)));
     }
 
 } else {
-    http_response_code(404);
     echo json_encode(array("message" => "ID does exist."));
 }
 mysqli_close($link);

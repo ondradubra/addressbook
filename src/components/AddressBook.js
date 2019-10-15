@@ -1,13 +1,24 @@
 import React, {Component} from 'react'
 import * as fetch from 'isomorphic-fetch'
 
-import {CONTACT_TYPES, API} from '../constants/variables'
+import {CONTACT_TYPES, API, NEWID, isAnyContactEmpty} from '../constants/variables'
 
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
 import * as Actions from '../actions/actions'
 
+let backupData = null
+
 class AddressBook extends Component {
+    constructor(props) {
+        super(props)
+
+        this.state = {
+            editMode: false,
+            isLoading: true
+        }
+    }
+
     componentDidMount() {
          this.loadData()   
     }
@@ -15,79 +26,69 @@ class AddressBook extends Component {
     loadData = () => {
         const {actions} = this.props
         fetch(`${API}/get.php`)
-        .then((response) => {
-            if (response.status >= 400) {
-                throw new Error("Bad response from server")
-            }
-            return response.json()
-        }).then((data) => actions.loadData(data))  
-    }
-
-    contactsList = () => {
-        const {data, actions} = this.props
-        return (
-            <div className='AddressBook__list'>
-                <h2>Address Book</h2>
-                {
-                    data.length > 0 ? 
-                        <div className='AddressBook__list_content'>
-                            {[...data].sort((a, b) => {
-                                    const surname1 = a.surname.toUpperCase()
-                                    const surname2 = b.surname.toUpperCase()
-
-                                    if (surname1 > surname2) {
-                                        return 1
-                                    }
-                                    if (surname1 < surname2) {
-                                        return -1
-                                    }
-                                    return 0
-                            }).map((item) => 
-                                <div
-                                    className='AddressBook__contact-item'
-                                    key={item.id}
-                                >
-                                    <span className='AddressBook__contact-item--name' onClick={() => actions.openContact(item.id)}>{item.name} {item.surname}</span>
-                                    <span
-                                        className='link delete'
-                                        onClick={(e) => {
-                                            e.preventDefault()
-                                            actions.deleteContact(item.id)
-                                        }}
-                                    >
-                                        Delete
-                                    </span>
-                                </div>
-                            )}
-                        </div> : 
-                        <div className='AddressBook__empty'>Your address book is empty.</div>
+            .then((response) => {
+                if (response.status >= 400) {
+                    throw new Error("Bad response from server")
                 }
-                <span
-                    className='link addNew'
-                    onClick={(e) => {
-                        e.preventDefault()
-                        actions.addContact()
-                    }}
-                >
-                    Add new contact
-                </span>
-            </div>
-        )
+                return response.json()
+            }).then((data) => this.setState({isLoading: false }, () => { actions.loadData(data) }))  
+
     }
-    isAnyContactEmpty = (contactData) => {
-        let isAnyContactEmpty = false
-        contactData.forEach((contact) => {
-            isAnyContactEmpty = contact.content === '' 
-        });
-        return isAnyContactEmpty
-    }
+
     findContactDataById = () => {
-        const {activeContact, data} = this.props
-        return data.find((item) => item.id === activeContact)
+        const {activeContactId, data} = this.props
+        return data.find((item) => item.id === activeContactId)
+    }
+    cancelEditing = () => {
+        const {actions} = this.props
+        this.setState({editMode: false}, () => {
+            actions.cancelEditing(backupData)
+            backupData = null
+        })
+    }
+    saveExistingContact = (data) => {
+        backupData = null
+        this.setState({editMode: false}, async () => {
+            const id = data.id
+            try {
+                await fetch(`${API}/put.php?id=${id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify(data),
+                    headers: new Headers({
+                        'Content-Type': 'application/json'
+                    })
+                })
+            }
+            catch (err) {
+                console.error('request failed', err);
+            }
+        })
+    }
+    saveNewContact = (data) => {
+        const {actions} = this.props
+        backupData = null
+        this.setState({editMode: false}, async () => {
+            try {
+                await fetch(`${API}/post.php`, {
+                    method: 'POST',
+                    body: JSON.stringify(data),
+                    headers: new Headers({
+                        'Content-Type': 'application/json'
+                    })
+                }).then((response) => {
+                    if (response.status >= 400) {
+                        throw new Error("Bad response from server")
+                    }
+                    return response.json()
+                }).then((data) => actions.updateId(String(data.id)))  
+            }
+            catch (err) {
+                console.error('request failed', err);
+            }
+        })
     }
     editCard = (contactData) => {
         const {actions} = this.props
-
         return (
             <div className='AddressBook__card__content'>
                 <h2>Edit contact</h2>
@@ -96,12 +97,10 @@ class AddressBook extends Component {
                         <span className='formRow__label'>First name</span>
                         <input
                             type="text"
+                            name="name"
                             value={contactData.name}
                             className='input'
-                            onChange={(e) => {
-                                const value = e.target.value
-                                actions.editName(value, 'name')
-                            }}
+                            onChange={(e) => actions.editName(e.target.value, e.target.name)}
                         />
                     </label>
                 </div>
@@ -110,12 +109,10 @@ class AddressBook extends Component {
                         <span className='formRow__label'>Last name</span>
                         <input
                             type="text"
+                            name="surname"
                             value={contactData.surname}
                             className='input'
-                            onChange={(e) => {
-                                const value = e.target.value
-                                actions.editName(value, 'surname')
-                            }}
+                            onChange={(e) =>  actions.editName(e.target.value, e.target.name)}
                         />
                     </label>
                 </div>
@@ -158,11 +155,13 @@ class AddressBook extends Component {
                     </span>
                 </div>
                 <div className='AddressBook__card__buttons--save'>
-                    <button type='button' className='cancel' onClick={() => actions.cancelEditing()}>Cancel</button>
+                    <button type='button' className='cancel' onClick={() => this.cancelEditing()}>Cancel</button>
                     <button
                         type='button'
-                        onClick={() => actions.saveEditing()}
-                        disabled={contactData.name === '' || contactData.surname === '' || this.isAnyContactEmpty(contactData.contacts)}
+                        onClick={() => {
+                            contactData.id === NEWID ? this.saveNewContact(contactData) : this.saveExistingContact(contactData)
+                        }}
+                        disabled={contactData.name === '' || contactData.surname === '' || isAnyContactEmpty(contactData.contacts)}
                     >
                         Save
                     </button>
@@ -170,10 +169,9 @@ class AddressBook extends Component {
             </div>
         )
     }
-    showCard = () => {
-        const {actions} = this.props
-        const contactData = this.findContactDataById()
-
+    showCard = (contactData) => {
+        const {actions, data} = this.props
+    
         return (
             <div className='AddressBook__card__content'>
                 <div className='AddressBook__card__buttons'>
@@ -181,7 +179,8 @@ class AddressBook extends Component {
                         className='link AddressBook__card__edit'
                         onClick={(e)=> {
                             e.preventDefault()
-                            actions.editContact(contactData)
+                            backupData = data
+                            this.setState({editMode: true})
                         }}
                     >
                         Edit
@@ -191,7 +190,7 @@ class AddressBook extends Component {
                         onClick={(e) => {
                             e.preventDefault()
                             actions.closeContact() 
-                    }}>
+                        }}>
                         Close
                     </span>
                 </div>
@@ -207,21 +206,96 @@ class AddressBook extends Component {
             </div>
         )
     }
-    contactCard = () => {
-        const {isEditingContact} = this.props
-
+    contactDetail = () => {
+        const {editMode} = this.state
+        const data = this.findContactDataById()
         return (
             <div className='AddressBook__card'>
-                {isEditingContact ? this.editCard(this.findContactDataById(), true) : this.showCard()}
+                {editMode ? this.editCard(data) : this.showCard(data)}
             </div>
         )
     }
+    deleteContact = (id) => {
+        const {actions} = this.props
+        try {
+            fetch(`${API}/delete.php?id=${id}`, {
+                method: 'DELETE',
+                headers: new Headers({
+                    'Content-Type': 'application/json'
+                })
+            })
+        }
+        catch (err) {
+            console.error('request failed', err);
+        }
+        actions.deleteContact(id)
+    }
+    contactsList = () => {
+        const {data, actions} = this.props
+        return (
+            <div className='AddressBook__list'>
+                <h2>Address Book</h2>
+                {
+                    data.length > 0 ? 
+                        <div className='AddressBook__list_content'>
+                            {[...data].sort((a, b) => {
+                                    const surname1 = a.surname.toUpperCase()
+                                    const surname2 = b.surname.toUpperCase()
+
+                                    if (surname1 > surname2) {
+                                        return 1
+                                    }
+                                    if (surname1 < surname2) {
+                                        return -1
+                                    }
+                                    return 0
+                            }).map((item) => 
+                                <div
+                                    className='AddressBook__contact-item'
+                                    key={item.id}
+                                >
+                                    <span className='AddressBook__contact-item--name' onClick={() => actions.openContact(item.id)}>{item.name} {item.surname}</span>
+                                    <span
+                                        className='link delete'
+                                        onClick={(e) => {
+                                            e.preventDefault()
+                                            this.deleteContact(item.id)
+                                        }}
+                                    >
+                                        Delete
+                                    </span>
+                                </div>
+                            )}
+                        </div> : 
+                        <div className='AddressBook__empty'>Your address book is empty.</div>
+                }
+                <span
+                    className='link addNew'
+                    onClick={(e) => {
+                        e.preventDefault()
+                        backupData = data
+                        this.setState({editMode: true}, () => {
+                            actions.addContact()
+                        })
+                    }}
+                >
+                    Add new contact
+                </span>
+            </div>
+        )
+    }
+    loading = () => {
+        return (
+            <div className="loading"></div>
+        )
+    }
+
     render() {
-        const {activeContact} = this.props
-        console.log(this.props)
+        const {activeContactId} = this.props
+        const {isLoading} = this.state
         return (
             <div className='AddressBook__content'>
-                {activeContact ? this.contactCard() : this.contactsList()}
+                {isLoading ? this.loading() : activeContactId ? this.contactDetail() : this.contactsList()}
             </div>
         )
     }
@@ -229,8 +303,7 @@ class AddressBook extends Component {
 
 const mapStateToProps = (state) => ({
     data: state.data,
-    isEditingContact: state.isEditingContact,
-    activeContact: state.activeContact
+    activeContactId: state.activeContact
 })
 
 const mapDispatchToProps = (dispatch) => ({
