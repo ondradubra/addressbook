@@ -74,6 +74,7 @@ export default function reducer(state = initialState, action) {
             const newData = state.data.filter((item) => item.id !== id)
             return produce(state, (s) => {
                 s.data = newData
+                s.activeContact = null
             })
         case CHANGE_CONTACT_ITEM_TYPE:
             const type = action.payload.type
