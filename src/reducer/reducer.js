@@ -13,7 +13,7 @@ import {
     UPDATE_ID
 } from '../constants/actions' 
 import produce from 'immer'
-import {CONTACT_TYPES, NEWID} from '../constants/variables'
+import {CONTACT_TYPES, CONTACT_TYPES_CONTENT, NEWID} from '../constants/variables'
 
 const initialState = {
     data: [],
@@ -24,6 +24,8 @@ export default function reducer(state = initialState, action) {
     const indexContact = state.data.findIndex((item) => item.id === state.activeContact)
     const indexItem = action.payload && action.payload.index
     const content = action.payload && action.payload.content
+    const value = action.payload && action.payload.value
+    const target = action.payload && action.payload.target
     const id = action.payload && action.payload.id
     const data = action.payload && action.payload.data
 
@@ -50,7 +52,7 @@ export default function reducer(state = initialState, action) {
             })
         case ADD_CONTACT_ITEM:
             return produce(state, (s) => {
-                s.data[indexContact].contacts.push({type: Object.keys(CONTACT_TYPES)[0], content: ''})
+                s.data[indexContact].contacts.push({type: CONTACT_TYPES[0], content: ''})
             }) 
         case ADD_CONTACT:
                 const newId = NEWID
@@ -78,12 +80,12 @@ export default function reducer(state = initialState, action) {
             })
         case CHANGE_CONTACT_ITEM_TYPE:
             const type = action.payload.type
-            return produce(state, (s) => {
-                s.data[indexContact].contacts[indexItem].type = type
+            return produce(state, (s) => {        
+                s.data[indexContact].contacts[indexItem] = {...CONTACT_TYPES_CONTENT[type], ...{type}}
             })    
         case CHANGE_CONTACT_ITEM_CONTENT:
             return produce(state, (s) => {
-                s.data[indexContact].contacts[indexItem].content = content
+                s.data[indexContact].contacts[indexItem][target] = value
             }) 
         case DELETE_CONTACT_ITEM:
             const newContacts = state.data[indexContact].contacts.filter((item, index) => index !== indexItem)

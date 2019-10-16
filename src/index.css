@@ -32,6 +32,7 @@ body {
   min-height: 400px;
   padding: 20px;
   padding-top: 60px;
+  padding-bottom: 60px;
   box-shadow: 3px 2px 5px 0px rgba(0,0,0,0.21);
 }
 .AddressBook__content h2{
@@ -94,7 +95,7 @@ body {
 }
 .formRow select  {
   display: block;
-  width: 110px;
+  width: 72px;
   margin-right: 10px;
 }
 .AddressBook__card__contacts {
@@ -159,4 +160,21 @@ body {
 .AddressBook__card__buttons--save  button:disabled, .AddressBook__card__buttons--save button[disabled] {
   opacity: 0.3;
   cursor: not-allowed;
+}
+.AddressBook__card__contacts_group {
+  width: 300px;
+}
+.AddressBook__card__contacts_group input{
+  margin-bottom: 5px;
+  width: 260px;
+}
+.notSoSimpleRow {
+  display: flex;
+  width: 100%;
+  margin-bottom: 5px;
+}
+.notSoSimpleRow span {
+  display: block;
+  width: 100px;
+  opacity: 0.4;
 }

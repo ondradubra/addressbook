@@ -100,13 +100,14 @@ describe('redux actions', () => {
     expect(actions.changeContactItemType(type, index)).toEqual(expectedAction)
   })
   it('should create an action to change contact item content', () => {
-    const content = 'content'
+    const target = 'content'
+    const value = 'content'
     const index = 0
     const expectedAction = {
       type: types.CHANGE_CONTACT_ITEM_CONTENT,
-      payload: {content, index} 
+      payload: {value, target, index} 
     }
-    expect(actions.changeContactItemContent(content, index)).toEqual(expectedAction)
+    expect(actions.changeContactItemContent(value, target, index)).toEqual(expectedAction)
   })
   it('should create an action to delete contact item', () => {
     const index = 0
@@ -225,7 +226,7 @@ describe('redux reducer', () => {
                                 content: 'email@email.com'
                             },
                             {
-                                type: Object.keys(CONTACT_TYPES)[0],
+                                type: CONTACT_TYPES[0],
                                 content: ''
                             }
                         ] 
@@ -320,7 +321,7 @@ describe('redux reducer', () => {
                         contacts: [
                             {
                                 type: 'phone',
-                                content: 'email@email.com'
+                                content: ''
                             }
                         ] 
                     }
@@ -331,12 +332,13 @@ describe('redux reducer', () => {
     })
 
     it('should handle CHANGE_CONTACT_ITEM_CONTENT', () => {
-        const content = '111'
+        const target = 'content'
+        const value = 'a@a.cz'
         const index = 0
         expect(
           reducer(initialStateWithContact, {
             type: types.CHANGE_CONTACT_ITEM_CONTENT,
-            payload: {content, index}
+            payload: {value, target, index}
           })
         ).toEqual(
             {
@@ -348,7 +350,7 @@ describe('redux reducer', () => {
                         contacts: [
                             {
                                 type: 'email',
-                                content: '111'
+                                content: 'a@a.cz'
                             }
                         ] 
                     }

@@ -20,7 +20,7 @@ export const addContactItem = () => ({ type: ADD_CONTACT_ITEM })
 export const addContact = () => ({ type: ADD_CONTACT })
 
 export const changeContactItemType = (type, index) => ({ type: CHANGE_CONTACT_ITEM_TYPE, payload: {type, index} })
-export const changeContactItemContent = (content, index) => ({ type: CHANGE_CONTACT_ITEM_CONTENT, payload: {content, index} })
+export const changeContactItemContent = (value, target, index) => ({ type: CHANGE_CONTACT_ITEM_CONTENT, payload: {value, target, index} })
 export const deleteContactItem = (index) => ({ type: DELETE_CONTACT_ITEM, payload: {index} })
 
 export const editName = (content, target) => ({ type: EDIT_NAME, payload: {content, target} })

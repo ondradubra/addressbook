@@ -1,7 +1,8 @@
 import React, {Component} from 'react'
-import * as fetch from 'isomorphic-fetch'
+import fetch from 'isomorphic-fetch';
 
-import {CONTACT_TYPES, API, NEWID, isAnyContactEmpty} from '../constants/variables'
+import {CONTACT_TYPES, CONTACT_TYPES_TRANSLATE, CONTACT_TYPES_CONTENT, API, NEWID, isAnyContactEmpty} from '../constants/variables'
+import {ContactItem} from './ContactItem'
 
 import {connect} from 'react-redux'
 import {bindActionCreators} from 'redux'
@@ -89,6 +90,7 @@ class AddressBook extends Component {
     }
     editCard = (contactData) => {
         const {actions} = this.props
+        
         return (
             <div className='AddressBook__card__content'>
                 <h2>Edit contact</h2>
@@ -120,17 +122,27 @@ class AddressBook extends Component {
                     {contactData.contacts.map((contactItem, index) => 
                         <div className='formRow' key={`edit-contactItem${index}`}>
                             <select onChange={(e) => actions.changeContactItemType(e.target.value, index)} value={contactItem.type}>
-                                {Object.keys(CONTACT_TYPES).map((contactTypeKey) => <option key={contactTypeKey} value={contactTypeKey}>{CONTACT_TYPES[contactTypeKey]}</option>)}
+                                {CONTACT_TYPES.map((contactTypeKey) => <option key={contactTypeKey} value={contactTypeKey}>{CONTACT_TYPES_TRANSLATE[contactTypeKey]}</option>)}
                             </select>
-                            <input
-                                type="text"
-                                value={contactItem.content}
-                                onChange={(e) => {
-                                    const value = e.target.value
-                                    actions.changeContactItemContent(value, index)
-                                }}
-                                className='input'
-                            />
+                            <div className='AddressBook__card__contacts_group'>
+                                {
+                                    Object.keys(CONTACT_TYPES_CONTENT[contactItem.type]).map((formItem) => (
+                                        <input
+                                            key={`${index}-item-${formItem}`}
+                                            type="text"
+                                            value={contactItem[formItem]}
+                                            name={formItem}
+                                            placeholder={CONTACT_TYPES_TRANSLATE[formItem]}
+                                            onChange={(e) => {
+                                                const value = e.target.value
+                                                const target = e.target.name
+                                                actions.changeContactItemContent(value, target, index)
+                                            }}
+                                            className='input'
+                                        />
+                                    ))
+                                }
+                            </div>
                             <span
                                 className='link delete'
                                 onClick={(e) => { 
@@ -198,8 +210,12 @@ class AddressBook extends Component {
                 <ul className='AddressBook__card__contacts'>
                     {contactData.contacts.map((contactItem, index) => 
                         <li key={`contactItem${index}`} className='contactItem'>
-                            <span className='contactItemType'>{CONTACT_TYPES[contactItem.type]}</span>
-                            <span className='contactItemContent'>{contactItem.content}</span>
+                            <div className='contactItemType'>{CONTACT_TYPES_TRANSLATE[contactItem.type]}</div>
+                            <div className='contactItemContent'>
+                                {Object.keys(CONTACT_TYPES_CONTENT[contactItem.type]).map((formItem) => 
+                                    <ContactItem key={`${formItem}-${index}`} value={contactItem[formItem]} type={contactItem.type} innerType={formItem} />
+                                )}
+                            </div>
                         </li>
                     )}
                 </ul>
@@ -293,6 +309,7 @@ class AddressBook extends Component {
     render() {
         const {activeContactId} = this.props
         const {isLoading} = this.state
+
         return (
             <div className='AddressBook__content'>
                 {isLoading ? this.loading() : activeContactId ? this.contactDetail() : this.contactsList()}
