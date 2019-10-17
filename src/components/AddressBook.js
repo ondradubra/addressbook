@@ -267,7 +267,7 @@ class AddressBook extends Component {
                                     return 0
                             }).map((item) => 
                                 <div
-                                    className='AddressBook__contact-item'
+                                    className='AddressBook__contact-item link'
                                     key={item.id}
                                 >
                                     <span className='AddressBook__contact-item--name' onClick={() => actions.openContact(item.id)}>{item.name} {item.surname}</span>
